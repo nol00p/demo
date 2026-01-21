@@ -63,7 +63,7 @@ func PostProject(c *gin.Context) {
 }
 
 func PutProject(c *gin.Context) {
-	var Project models.Project
+	var project models.Project
 
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -72,7 +72,7 @@ func PutProject(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 	}
 
-	if err := config.DB.First(&Project, id).Error; err != nil {
+	if err := config.DB.First(&project, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Project Not found"})
 		return
 	}
@@ -107,11 +107,36 @@ func PutProject(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&Project).Updates(updates).Error; err != nil {
+	if err := config.DB.Model(&project).Updates(updates).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating project"})
 		return
 	}
 
-	c.JSON(http.StatusOK, Project)
+	c.JSON(http.StatusOK, project)
 
+}
+
+func DeleteProject(c *gin.Context) {
+	var project models.Project
+
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	// Check if id format is valid
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+	}
+
+	// Check if the project exists
+	if err := config.DB.First(&project, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project Not found"})
+		return
+	}
+
+	// remove project
+	if err := config.DB.Delete(&project).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Project not Found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Project succesfully deleted"})
 }
