@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -59,4 +60,58 @@ func PostProject(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, project)
+}
+
+func PutProject(c *gin.Context) {
+	var Project models.Project
+
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+	}
+
+	if err := config.DB.First(&Project, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project Not found"})
+		return
+	}
+
+	var input models.ProjectUpdateInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid Format"})
+		return
+	}
+
+	updates := make(map[string]interface{})
+
+	if input.Name != nil {
+		updates["name"] = *input.Name
+	}
+
+	if input.Descripton != nil {
+		updates["descripton"] = *input.Descripton
+	}
+
+	if input.Image != nil {
+		updates["image"] = *input.Image
+	}
+
+	if input.Skills != nil {
+		updates["skills"] = datatypes.JSONSlice[string](*input.Skills)
+	}
+
+	if len(updates) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No update Requested"})
+		return
+	}
+
+	if err := config.DB.Model(&Project).Updates(updates).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating project"})
+		return
+	}
+
+	c.JSON(http.StatusOK, Project)
+
 }
