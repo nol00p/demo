@@ -25,8 +25,8 @@ type Project struct {
 }
 
 type ProjectUpdateInput struct {
-	Name       *string   `json:"name"`
-	Descripton *string   `json:"description"`
-	Image      *string   `json:"image"`
-	Skills     *[]string `json:"skills"`
+	Name        *string   `json:"name"`
+	Description *string   `json:"description"`
+	Image       *string   `json:"image"`
+	Skills      *[]string `json:"skills"`
 }

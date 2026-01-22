@@ -57,6 +57,7 @@ func PostProject(c *gin.Context) {
 
 	if err := config.DB.Create(&project).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while creating Project"})
+		return
 	}
 
 	c.JSON(http.StatusOK, project)
@@ -70,6 +71,7 @@ func PutProject(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+		return
 	}
 
 	if err := config.DB.First(&project, id).Error; err != nil {
@@ -90,8 +92,8 @@ func PutProject(c *gin.Context) {
 		updates["name"] = *input.Name
 	}
 
-	if input.Descripton != nil {
-		updates["descripton"] = *input.Descripton
+	if input.Description != nil {
+		updates["description"] = *input.Description
 	}
 
 	if input.Image != nil {
@@ -125,6 +127,7 @@ func DeleteProject(c *gin.Context) {
 	// Check if id format is valid
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+		return
 	}
 
 	// Check if the project exists
