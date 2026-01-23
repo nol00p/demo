@@ -1,0 +1,26 @@
+info:
+  contact: {}
+  description: Description of the Shareing Project
+  title: Project Sharing
+  version: "1.0"
+paths:
+  /projects:
+    get:
+      description: Get all Projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: arrray
+      security:
+      - BearerAuth: []
+      tags:
+      - Projects
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

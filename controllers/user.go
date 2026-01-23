@@ -3,7 +3,9 @@ package controllers
 import (
 	"demo/config"
 	"demo/models"
+	"demo/utils"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +49,7 @@ func Login(c *gin.Context) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
-	tokenString, err := token.SignedString([]byte("a-string-secret-at-least-256-bits-long"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while generating the token "})
@@ -70,6 +72,11 @@ func Register(c *gin.Context) {
 	config.DB.Model(&models.User{}).Where("email = ?", user.Email).Count(&count)
 	if count > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email Allready in Use"})
+		return
+	}
+
+	if err := utils.ValidatePassword(user.Password); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
