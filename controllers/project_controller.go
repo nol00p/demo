@@ -18,7 +18,7 @@ import (
 // @Description Get all Projects
 // @Tags Projects
 // @Produce json
-// @Success 200  {arrray} models.GetProjects
+// @Success 200  {arrray} models.Project
 // @Security BearerAuth
 // @Router /projects [get]
 func GetProjects(c *gin.Context) {
