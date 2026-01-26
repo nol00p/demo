@@ -1,3 +1,74 @@
+definitions:
+  models.Comment:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      project_id:
+        type: integer
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  models.Project:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      likes:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+      name:
+        type: string
+      skills:
+        items:
+          type: string
+        type: array
+      updatedAt:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  models.User:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      likedProjects:
+        items:
+          $ref: '#/definitions/models.Project'
+        type: array
+      password:
+        minLength: 6
+        type: string
+      updatedAT:
+        type: string
+    required:
+    - email
+    - password
+    type: object
 info:
   contact: {}
   description: Description of the Shareing Project
@@ -13,7 +84,9 @@ paths:
         "200":
           description: OK
           schema:
-            type: arrray
+            items:
+              $ref: '#/definitions/models.Project'
+            type: array
       security:
       - BearerAuth: []
       tags:
